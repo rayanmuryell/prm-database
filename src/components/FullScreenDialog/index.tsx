@@ -13,10 +13,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { ItemType } from '../types/index'; // Importe o tipo ItemType
-import ShieldIcon from '@mui/icons-material/Shield';
-import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
-import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -183,48 +179,56 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
 
 
 
-                    {filteredItemListWithPercentages.map((itemInfo, index) => {
-                        if (itemInfo && !isNaN(itemInfo.percentage)) {
-                            const percentage = itemInfo.percentage;
-                            const isRare = percentage >= 1 && percentage <= 3;
-                            const isEpic = percentage < 1;
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {filteredItemListWithPercentages.map((itemInfo, index) => {
+                            if (itemInfo && !isNaN(itemInfo.percentage)) {
+                                const percentage = itemInfo.percentage;
+                                const isRare = percentage >= 1 && percentage <= 3;
+                                const isEpic = percentage < 1;
 
-                            return (
-<ListItem button key={itemInfo.index}>
-        <ListItemText
-          primary={itemInfo.primary}
-          secondary={
-            <div>
-              <span>{`(${percentage}%)`}</span>
-              {isRare && (
-                <span style={{ marginLeft: '8px' }}>
-                  <span style={{ padding: '4px', backgroundColor: 'purple', color: 'white', borderRadius: '10px' }}>
-                    RARE
-                  </span>
-                </span>
-              )}
-              {isEpic && (
-                <span style={{ marginLeft: '8px' }}>
-                  <span style={{ padding: '4px', backgroundColor: 'gold', color: 'black', borderRadius: '10px' }}>
-                    EPIC!
-                  </span>
-                </span>
-              )}
-            </div>
-          }
-        />
-      </ListItem>
-    );
-  } else {
-    return null;
-  }
-})}
+                                const itemStyle = {
+                                    flex: '0 0 calc(20% - 20px)',
+                                    margin: '10px',
+                                    border: '1px dashed gray', // Adicione uma borda de pontilhado cinza
+                                    padding: '10px', // Adicione um espaçamento interno
+                                };
 
-
-
-
-
-
+                                return (
+                                    <div
+                                        key={itemInfo.index}
+                                        style={itemStyle}
+                                    >
+                                        <ListItem button style={{ height: '100%' }}>
+                                            <ListItemText
+                                                primary={itemInfo.primary}
+                                                secondary={
+                                                    <div>
+                                                        <span>{`(${percentage}%)`}</span>
+                                                        {isRare && (
+                                                            <span style={{ marginLeft: '8px' }}>
+                                                                <span style={{ padding: '4px', backgroundColor: 'purple', color: 'white', borderRadius: '10px' }}>
+                                                                    RARE
+                                                                </span>
+                                                            </span>
+                                                        )}
+                                                        {isEpic && (
+                                                            <span style={{ marginLeft: '8px' }}>
+                                                                <span style={{ padding: '4px', backgroundColor: 'gold', color: 'black', borderRadius: '10px' }}>
+                                                                    EPIC!
+                                                                </span>
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                }
+                                            />
+                                        </ListItem>
+                                    </div>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
+                    </div>
                 </List>
             </Dialog>
         </div>

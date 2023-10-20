@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import FullScreenDialog from '../FullScreenDialog';
 import { ItemType } from '../types/index'; // Importe o tipo ItemType
+import Footer from '../Footer';
 
 
 const PlanilhaData = () => {
@@ -121,6 +122,11 @@ const PlanilhaData = () => {
 
     const sortedResults = [...searchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
 
+    const containerStyle: React.CSSProperties = {
+        position: 'relative',
+        minHeight: '100vh',
+        paddingBottom: '60px', // Altura do footer, ajuste conforme necessário
+      };
 
     return (
         <Box>
@@ -180,6 +186,7 @@ const PlanilhaData = () => {
                     setPage(0);
                 }}
             />
+            <Footer />
 
         </Box>
 

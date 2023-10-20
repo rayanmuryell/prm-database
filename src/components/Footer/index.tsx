@@ -4,18 +4,9 @@ import DiscordImage from 'next/image';
 
 function Footer() {
   const footerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100px',
-    width: '100%',
-    backgroundColor: '#2e2d2d',
-    padding: '10px',
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 'auto', // Deixa o footer no final da página
+    marginTop: '40px',
   };
+
 
   const contentStyle: React.CSSProperties = {
     display: 'flex',
@@ -34,14 +25,13 @@ function Footer() {
     display: 'flex',
     justifyContent: 'center',
     gap: '10px',
-    marginTop: '10px',
   };
 
   return (
     <footer style={footerStyle}>
       <div style={contentStyle}>
         <p>
-          All data displayed in the application were created by <b>RafCake</b> and <b>Grimoire</b>, and are original to their <b><a href="https://docs.google.com/spreadsheets/d/1Nle99PghJVQxCwg-auVl04BpCBZqepjS7ms9naG427A/" target="_blank">web spreadsheet</a></b>.
+          All data displayed in the application were created by <b>RafCake</b> and <b>Grimoire</b>, and are original to their <u><b><a href="https://docs.google.com/spreadsheets/d/1Nle99PghJVQxCwg-auVl04BpCBZqepjS7ms9naG427A/" target="_blank">web spreadsheet</a></b>.</u>
         </p>
         <p>This database is unofficial, and some data may not match what's on the Return to Morroc server.</p>
         <div style={contactStyle}>

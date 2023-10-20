@@ -18,8 +18,9 @@ export default function Db() {
         <div className="coisos" style={{ margin: '30px' }}>
           <PlanilhaData />
         </div>
+        
       </main>
-      <Footer />
+      
     </>
   )
 }
