@@ -6,7 +6,7 @@ import { Typography } from '@mui/material';
 
 export default function SearchAppBar() {
     return (
-        <Toolbar style={{ backgroundColor: '#690a24' }}>
+        <Toolbar style={{ backgroundColor: '#5e151b' }}>
             <img
                 src={logo.src}
                 alt='Logo PRM'

@@ -104,6 +104,7 @@ const PlanilhaData = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ color: '#ffffff', marginBottom: '10px' }}
             />
+
             <TableContainer component={Paper}>
 
                 <Table sx={{}} aria-label="simple table">

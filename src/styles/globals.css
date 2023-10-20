@@ -27,3 +27,42 @@ table.customTable td, table.customTable th {
 table.customTable thead {
   background-color: #161D2B;
 }
+
+
+.Dark {
+  color: #000000; /* Cor para a palavra "Dark" */
+}
+
+.Earth {
+  color: #804000; /* Cor para a palavra "Earth" */
+}
+
+.Fire {
+  color: #FF0000; /* Cor para a palavra "Fire" */
+}
+
+.Water {
+  color: #03adfc
+}
+
+.Ghost {
+  color: #cacbcc
+}
+
+.Holy {
+  color: #e6e209
+}
+
+.Poison {
+  color: #31e820
+}
+
+.Undead {
+  color: #a1789b
+}
+
+.Wind {
+  color: #10c95a
+}
+
+/* Repita para outras palavras-chave */
