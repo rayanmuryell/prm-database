@@ -1,4 +1,6 @@
 import React from 'react';
+import GitImage from 'next/image'
+import DiscordImage from 'next/image'
 
 function Footer() {
   const footerStyle: React.CSSProperties = {
@@ -46,12 +48,12 @@ function Footer() {
       <div style={imageStyle}>
         <div className='contact'>
           <a href="https://discord.gg/returntomorroc" target="_blank" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <img src="https://i.imgur.com/7henIff.png" alt="imageDiscord" />
+            <DiscordImage src='/discord.png' alt="imageDiscord" width="1000" height="1000"/>
           </a>
         </div>
         <div className='contact'>
           <a href="https://github.com/rayanmuryell" target="_blank" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="imageGithub" />
+          <GitImage src='/github.png' alt="imageDiscord" width="1000" height="1000"/>
           </a>
         </div>
       </div>
