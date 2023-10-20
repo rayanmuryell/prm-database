@@ -12,6 +12,7 @@ export default function Db() {
   return (
     <>
       <SearchAppBar />
+      
 
       <main>
         <div className="coisos" style={{ margin: '30px' }}>

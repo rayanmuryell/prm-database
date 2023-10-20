@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Typography } from '@mui/material';
 import FullScreenDialog from '../FullScreenDialog';
 import { ItemType } from '../types/index'; // Importe o tipo ItemType
 
@@ -64,6 +64,8 @@ const PlanilhaData = () => {
                 }));
 
                 setData(typedData);
+                // Define os primeiros 5 resultados como os resultados de pesquisa iniciais
+                setSearchResults(typedData.slice(0, 5));
             } catch (error) {
                 console.error('Erro ao buscar os dados da planilha:', error);
             }
@@ -72,39 +74,67 @@ const PlanilhaData = () => {
         fetchData();
     }, []);
 
+
+    const [pagedSearchResults, setPagedSearchResults] = useState<ItemType[]>([]);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Pode ajustar o número de itens por página
+    const [sortedSearchResults, setSortedSearchResults] = useState<ItemType[]>([]);
+
+
     useEffect(() => {
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
             const results = data.filter((item) => item['Mob Name'].toLowerCase().includes(lowerCaseSearchTerm));
             setSearchResults(results);
+    
+            const startIdx = page * rowsPerPage;
+            const endIdx = startIdx + rowsPerPage;
+            setPagedSearchResults(results.slice(startIdx, endIdx));
         } else {
-            setSearchResults([]);
+            setSearchResults(data.slice(0, 5));
+    
+            setPage(0);
+    
+            const startIdx = 0;
+            const endIdx = startIdx + rowsPerPage;
+            setPagedSearchResults(data.slice(startIdx, endIdx));
         }
-    }, [searchTerm, data]);
+    
+        // Adicione a classificação aqui
+        const sortedResults = [...pagedSearchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
+        setSortedSearchResults(sortedResults);
+    
+    }, [searchTerm, data, page, rowsPerPage, pagedSearchResults]);
+    
+    
 
 
 
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5); // Pode ajustar o número de itens por página
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, searchResults.length - page * rowsPerPage);
 
     // Crie uma função para calcular os itens da página atual
     const getItemsForPage = () => {
-        return searchResults.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+        const startIndex = page * rowsPerPage;
+        return searchResults.slice(startIndex, startIndex + rowsPerPage);
     };
 
+    const sortedResults = [...searchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
 
 
     return (
         <Box>
+            <Typography sx={{ flex: 1, color: '#5a5e5b' }} variant="h6" component="div">
+                Search Name
+            </Typography>
             <TextField
                 id="outlined-search" label="Mob Name" type="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ color: '#ffffff', marginBottom: '10px' }}
             />
-
+            <div className='levelrange'>
+            </div>
             <TableContainer component={Paper}>
 
                 <Table sx={{}} aria-label="simple table">
@@ -117,7 +147,7 @@ const PlanilhaData = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {getItemsForPage().map((item, index) => (
+                    {pagedSearchResults.map((item, index) => (
                             <TableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -141,7 +171,7 @@ const PlanilhaData = () => {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={searchResults.length}
+                count={searchResults.length} // Atualizado para o número de resultados de pesquisa
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={(event, newPage) => setPage(newPage)}
@@ -150,6 +180,7 @@ const PlanilhaData = () => {
                     setPage(0);
                 }}
             />
+
         </Box>
 
 
