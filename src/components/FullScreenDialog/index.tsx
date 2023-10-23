@@ -43,6 +43,7 @@ interface FullScreenDialogProps {
     const [selectedDropItem, setSelectedDropItem] = React.useState<string | null>();
     const [similarMobs, setSimilarMobs] = React.useState<ItemType[]>([]);
     const [similarMob, setSimilarMob] = React.useState<ItemType | null>(null);
+    const [originalMob, setOriginalMob] = React.useState<ItemType | null>(null);
 
 
 
@@ -50,13 +51,14 @@ interface FullScreenDialogProps {
 
 
     const handleClickOpen = (mob: any) => {
-        setSelectedMobName(mob['Mob Name']); // Defina o nome do monstro selecionado
+        setOriginalMob(similarMob);
         setOpen(true); // Abra o diálogo
       };
 
-    const handleClose = () => {
+      const handleClose = () => {
+        setSimilarMob(originalMob);
         setOpen(false);
-    };
+      };
 
     const handleSimilarMobClick = (mob: ItemType) => {
         setSimilarMob(mob); // Atualize o monstro similar selecionado
@@ -210,7 +212,7 @@ interface FullScreenDialogProps {
                             <CloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                        {similarMob ? similarMob['Mob Name'] : item['Mob Name']}
+                        {mob['Mob Name']}
                         </Typography>
                     </Toolbar>
                 </AppBar>
