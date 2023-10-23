@@ -51,8 +51,8 @@ const PlanilhaData = () => {
                     'Size': item['Size'],
                     'Race': item['Race'],
                     'Element': item['Element'],
-                    'Drop  1': item['Drop  1'],
-                    'Drop  2': item['Drop  2'],
+                    'Drop 1': item['Drop 1'],
+                    'Drop 2': item['Drop 2'],
                     'Drop 3': item['Drop 3'],
                     'Drop 4': item['Drop 4'],
                     'Drop 5': item['Drop 5'],
@@ -80,6 +80,8 @@ const PlanilhaData = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5); // Pode ajustar o número de itens por página
     const [sortedSearchResults, setSortedSearchResults] = useState<ItemType[]>([]);
+    const [selectedMobName, setSelectedMobName] = React.useState<string | null>(null);
+
 
 
     useEffect(() => {
@@ -87,46 +89,25 @@ const PlanilhaData = () => {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
             const results = data.filter((item) => item['Mob Name'].toLowerCase().includes(lowerCaseSearchTerm));
             setSearchResults(results);
-    
+
             const startIdx = page * rowsPerPage;
             const endIdx = startIdx + rowsPerPage;
             setPagedSearchResults(results.slice(startIdx, endIdx));
         } else {
             setSearchResults(data.slice(0, 5));
-    
+
             setPage(0);
-    
+
             const startIdx = 0;
             const endIdx = startIdx + rowsPerPage;
             setPagedSearchResults(data.slice(startIdx, endIdx));
         }
-    
+
         // Adicione a classificação aqui
         const sortedResults = [...pagedSearchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
         setSortedSearchResults(sortedResults);
-    
+
     }, [searchTerm, data, page, rowsPerPage, pagedSearchResults]);
-    
-    
-
-
-
-
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, searchResults.length - page * rowsPerPage);
-
-    // Crie uma função para calcular os itens da página atual
-    const getItemsForPage = () => {
-        const startIndex = page * rowsPerPage;
-        return searchResults.slice(startIndex, startIndex + rowsPerPage);
-    };
-
-    const sortedResults = [...searchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
-
-    const containerStyle: React.CSSProperties = {
-        position: 'relative',
-        minHeight: '100vh',
-        paddingBottom: '60px', // Altura do footer, ajuste conforme necessário
-      };
 
     return (
         <Box>
@@ -153,7 +134,7 @@ const PlanilhaData = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                    {pagedSearchResults.map((item, index) => (
+                        {pagedSearchResults.map((item, index) => (
                             <TableRow
                                 key={index}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -166,7 +147,12 @@ const PlanilhaData = () => {
                                 <TableCell align="center">{item['Level']}</TableCell>
                                 <TableCell align="center">{item['HP']}</TableCell>
                                 <TableCell align="center">
-                                    <FullScreenDialog item={item} />
+                                    <FullScreenDialog
+                                        item={item}
+                                        data={data}
+                                        selectedMobName={selectedMobName}
+                                        setSelectedMobName={setSelectedMobName}
+                                    />
                                 </TableCell>
                             </TableRow>
                         ))}

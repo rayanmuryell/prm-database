@@ -13,6 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { ItemType } from '../types/index'; // Importe o tipo ItemType
+import { useEffect } from 'react';
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -23,22 +24,53 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FullScreenDialog({ item }: { item: ItemType }) {
-    const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+interface FullScreenDialogProps {
+    item: ItemType;
+    data: ItemType[];
+    selectedMobName: string | null;
+    setSelectedMobName: (mobName: string | null) => void;
+  }
+
+
+  export default function FullScreenDialog({
+    item,
+    data,
+    selectedMobName,
+    setSelectedMobName,
+  }: FullScreenDialogProps) {
+    const [open, setOpen] = React.useState(false);
+    const [selectedDropItem, setSelectedDropItem] = React.useState<string | null>();
+    const [similarMobs, setSimilarMobs] = React.useState<ItemType[]>([]);
+    const [similarMob, setSimilarMob] = React.useState<ItemType | null>(null);
+
+
+
+
+
+
+    const handleClickOpen = (mob: any) => {
+        setSelectedMobName(mob['Mob Name']); // Defina o nome do monstro selecionado
+        setOpen(true); // Abra o diálogo
+      };
 
     const handleClose = () => {
         setOpen(false);
     };
 
+    const handleSimilarMobClick = (mob: ItemType) => {
+        setSimilarMob(mob); // Atualize o monstro similar selecionado
+      };
+      
+
+
+
+
+    const mob = similarMob ? similarMob:item
 
     // Suponha que `item` seja do tipo ItemType.
-    // Suponha que `item` seja do tipo ItemType.
-    const itemListWithPercentages = Object.keys(item).map((key, index) => {
-        const dropValue = item[key as keyof ItemType];
+    const itemListWithPercentages = Object.keys(mob).map((key, index) => {
+        const dropValue = mob[key as keyof ItemType];
         if (dropValue && dropValue.includes('(')) {
             const primary = dropValue.split('(')[0];
             const percentageMatch = dropValue.match(/\(([^)]+)\)/);
@@ -47,6 +79,7 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
         }
         return null;
     });
+
 
 
     // Remova os valores nulos do array.
@@ -80,7 +113,79 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
         }
     }
 
+    const mobDetails = selectedMobName
+        ? data.find((mob) => mob['Mob Name'] === selectedMobName)
+        : null;
 
+
+    function findSimilarMobs(data: ItemType[], clickedItem: string): ItemType[] {
+        const similarMobs: ItemType[] = [];
+
+        // Limpar o item clicado e tornar a pesquisa insensível a maiúsculas e minúsculas
+        const cleanedClickedItem = clickedItem.trim().toLowerCase();
+
+        data.forEach((mob) => {
+            for (let i = 1; i <= 10; i++) {
+                const dropFieldName = `Drop ${i}` as keyof ItemType;
+                const mobDropValue = mob[dropFieldName];
+
+                if (mobDropValue) {
+                    // Limpar o valor do drop na planilha e tornar a pesquisa insensível a maiúsculas e minúsculas
+                    const cleanedMobDropValue = mobDropValue.trim().toLowerCase();
+
+                    // Verificar se o item clicado está contido no valor do drop
+                    if (cleanedMobDropValue.includes(cleanedClickedItem)) {
+                        similarMobs.push(mob);
+                        break;
+                    }
+                }
+            }
+        });
+
+        return similarMobs;
+    }
+
+    const handleItemClick = (clickedItem: string) => {
+        setSelectedDropItem(clickedItem);
+
+        // Extrair o nome do item do valor clicado, ignorando a porcentagem
+        const clickedItemName = clickedItem.trim().split('(')[0].toLowerCase();
+        console.log(clickedItemName)
+
+        // Inicializar uma lista de mobs relacionados
+        const relatedMobs: ItemType[] = [];
+
+        // Percorrer cada mob
+        data.forEach((mob) => {
+            for (let i = 1; i <= 10; i++) {
+                const dropFieldName = `Drop ${i}` as keyof ItemType;
+                const mobDropValue = mob[dropFieldName];
+
+                if (mobDropValue) {
+                    // Extrair o nome do item do valor do drop, ignorando a porcentagem
+                    const mobItemName = mobDropValue.split('(')[0].trim();
+
+                    // Comparar os nomes dos itens
+                    if (mobItemName.trim().toLowerCase() === clickedItemName) {
+                        // Adicionar o mob à lista de mobs relacionados
+                        relatedMobs.push(mob);
+                    }
+                }
+            }
+        });
+
+        setSimilarMobs(relatedMobs);
+        setSelectedMobName(clickedItem);
+        console.log(clickedItem)
+        console.log(relatedMobs)
+    };
+
+    useEffect(() => {
+        if (similarMob) {
+          // Atualize os dados do monstro similar com base em similarMob
+          setSimilarMobs([similarMob]);
+        }
+      }, [similarMob]);
 
 
     return (
@@ -105,7 +210,7 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
                             <CloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                            {item['Mob Name']}
+                        {similarMob ? similarMob['Mob Name'] : item['Mob Name']}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -116,23 +221,23 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
                     <Divider />
                     <div className='fila-1' style={{ display: 'flex' }}>
                         <ListItem button>
-                            <ListItemText primary="Level" secondary={item['Level']} />
+                            <ListItemText primary="Level" secondary={mob['Level']} />
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
-                                <ListItemText primary="HP" secondary={item['HP']} />
+                                <ListItemText primary="HP" secondary={mob['HP']} />
                             </div>
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="HIT" secondary={item['HIT']} />
+                                <ListItemText primary="HIT" secondary={mob['HIT']} />
                             </div>
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="Flee" secondary={item['Flee']} />
+                                <ListItemText primary="Flee" secondary={mob['Flee']} />
                             </div>
                         </ListItem>
                     </div>
@@ -140,34 +245,35 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="Def" secondary={item['Def']} />
+                                <ListItemText primary="Def" secondary={mob['Def']} />
                             </div>
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="MDef" secondary={item['MDef']} />
+                                <ListItemText primary="MDef" secondary={mob['MDef']} />
                             </div>
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="Size" secondary={item['Size']} />
+                                <ListItemText primary="Size" secondary={mob['Size']} />
                             </div>
                         </ListItem>
                         <ListItem button>
                             <div className='icons' style={{ display: 'flex' }}>
 
-                                <ListItemText primary="Race" secondary={item['Race']} />
+                                <ListItemText primary="Race" secondary={mob['Race']} />
                             </div>
                         </ListItem>
                     </div>
                     <ListItem button>
                         <div className='icons' style={{ display: 'flex' }}>
                             <ListItemText primary="Element" secondary={
-                                <span className={getClassForElement(item['Element'])}>
-                                    {item['Element']}
+                                <span className={`${getClassForElement(mob['Element'])}`}>
+                                    {mob['Element']}
                                 </span>
+
                             } />
                         </div>
                     </ListItem>
@@ -186,17 +292,19 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
                                 const isRare = percentage >= 1 && percentage <= 3;
                                 const isEpic = percentage < 1;
 
-                                const itemStyle = {
+                                const itemStyle: React.CSSProperties = {
                                     flex: '0 0 calc(20% - 20px)',
                                     margin: '10px',
-                                    border: '1px dashed gray', // Adicione uma borda de pontilhado cinza
-                                    padding: '10px', // Adicione um espaçamento interno
+                                    border: '1px dashed gray',
+                                    padding: '10px',
+                                    cursor: 'pointer', // Estilo do cursor para indicar que é clicável
                                 };
 
                                 return (
                                     <div
                                         key={itemInfo.index}
                                         style={itemStyle}
+                                        onClick={() => handleItemClick(itemInfo.primary)}
                                     >
                                         <ListItem button style={{ height: '100%' }}>
                                             <ListItemText
@@ -223,12 +331,52 @@ export default function FullScreenDialog({ item }: { item: ItemType }) {
                                             />
                                         </ListItem>
                                     </div>
+
                                 );
                             } else {
                                 return null;
                             }
                         })}
                     </div>
+
+                    <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                    Monsters that also drop this item
+                    </Typography>
+                    <Divider />
+                    <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {similarMobs.map((mob, index) => (
+                            <div
+                                key={index}
+                                style={{
+                                    flex: '0 0 calc(20% - 20px)',
+                                    margin: '10px',
+                                    border: '1px dashed grey',
+                                    padding: '10px',
+                                    cursor: 'pointer',
+                                    transition: 'background-color 0.3s',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'lightgrey';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = 'transparent';
+                                }}
+                                onClick={() => {
+                                    console.log('Clicou no monstro:', mob);
+                                    handleSimilarMobClick(mob);
+                                }}
+                            >
+                                <ListItem>
+                                    <ListItemText
+                                        primary={mob['Mob Name']}
+                                        secondary={`Level: ${mob['Level']}`}
+                                    />
+                                </ListItem>
+                            </div>
+                        ))}
+                    </div>
+
+
                 </List>
             </Dialog>
         </div>

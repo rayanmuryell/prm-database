@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
-import { ItemType } from '../types/index'; // Importe o tipo ItemType
+import { ItemType_Item } from '../types/types_item';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -23,8 +23,15 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function FullScreenDialog() {
+interface FullScreenDialogProps {
+  itemName: string;
+  data: ItemType_Item[];
+}
+
+export default function FullScreenDialog({ itemName, data }: FullScreenDialogProps) {
   const [open, setOpen] = React.useState(false);
+  const [mobNameToDisplay, setMobNameToDisplay] = React.useState<string | null>(null);
+  const [mobsWithItem, setMobsWithItem] = React.useState<string[]>([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -34,46 +41,45 @@ export default function FullScreenDialog() {
     setOpen(false);
   };
 
+  React.useEffect(() => {
+    if (open) {
+      // Encontre os monstros que possuem o item no campo 'Drops'
+      const mobs = data
+        .filter((item) => {
+          const drops = item.Drops.map((drop) => drop.toLowerCase().trim());
+          return drops.includes(itemName.toLowerCase().trim());
+        })
+        .map((item) => item['Mob Name']);
+      setMobsWithItem(mobs);
+    }
+  }, [open, itemName, data]);
+
   return (
     <div>
       <Button variant="outlined" onClick={handleClickOpen}>
-        Open full-screen dialog
+        More
       </Button>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
+      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
         <AppBar sx={{ position: 'relative' }}>
           <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-            >
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
               <CloseIcon />
             </IconButton>
             <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Sound
+              {itemName}
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose}>
-              save
-            </Button>
           </Toolbar>
         </AppBar>
         <List>
-          <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
+          <Typography variant="h6" component="div">
+            Monsters with {itemName}:
+          </Typography>
+          {mobsWithItem.map((mobName) => (
+            <ListItem button key={mobName}>
+              <ListItemText primary={mobName} />
+            </ListItem>
+          ))}
           <Divider />
-          <ListItem button>
-            <ListItemText
-              primary="Default notification ringtone"
-              secondary="Tethys"
-            />
-          </ListItem>
         </List>
       </Dialog>
     </div>
