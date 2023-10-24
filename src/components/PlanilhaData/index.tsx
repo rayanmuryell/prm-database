@@ -10,6 +10,8 @@ const PlanilhaData = () => {
     const [data, setData] = useState<ItemType[]>([]); // Use o tipo ItemType
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState<ItemType[]>([]); // Use o tipo ItemType
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(5); // Você pode configurar isso conforme necessário
 
 
     useEffect(() => {
@@ -77,8 +79,6 @@ const PlanilhaData = () => {
 
 
     const [pagedSearchResults, setPagedSearchResults] = useState<ItemType[]>([]);
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5); // Pode ajustar o número de itens por página
     const [sortedSearchResults, setSortedSearchResults] = useState<ItemType[]>([]);
     const [selectedMobName, setSelectedMobName] = React.useState<string | null>(null);
 
@@ -87,34 +87,54 @@ const PlanilhaData = () => {
     useEffect(() => {
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
-            const results = data.filter((item) => item['Mob Name'].toLowerCase().includes(lowerCaseSearchTerm));
-            setSearchResults(results);
+            const filteredResults = data.filter((item) => {
+                // Verifique se 'Mob Name' ou as chaves de 'Drop 1' até 'Drop 10' contêm o termo de pesquisa em letras minúsculas
+                return (
+                    item['Mob Name'].toLowerCase().includes(lowerCaseSearchTerm) ||
+                    Array.from(Array(10).keys()).some((i) => {
+                        const key = `Drop ${i + 1}` as keyof ItemType;
+                        setPage(0);
+                        return item[key] && item[key].toLowerCase().includes(lowerCaseSearchTerm);
+                        
+                    })
+                );
+            });
 
-            const startIdx = page * rowsPerPage;
-            const endIdx = startIdx + rowsPerPage;
-            setPagedSearchResults(results.slice(startIdx, endIdx));
+            // Classifique os resultados filtrados
+            const sortedResults = [...filteredResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
+
+            // Defina os resultados filtrados e classificados
+            setSortedSearchResults(sortedResults);
         } else {
-            setSearchResults(data.slice(0, 5));
-
-            setPage(0);
-
-            const startIdx = 0;
-            const endIdx = startIdx + rowsPerPage;
-            setPagedSearchResults(data.slice(startIdx, endIdx));
+            // Se não houver um termo de pesquisa, exiba todos os dados
+            const sortedResults = [...data].sort((a, b) => Number(b['Level']) - Number(a['Level']));
+            setSortedSearchResults(sortedResults);
         }
 
-        // Adicione a classificação aqui
-        const sortedResults = [...pagedSearchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
-        setSortedSearchResults(sortedResults);
-    }, [searchTerm, data, page, rowsPerPage]);
+        // Lógica de paginação
+        const startIdx = page * rowsPerPage;
+        const endIdx = startIdx + rowsPerPage;
+        const paginatedResults = sortedSearchResults.slice(startIdx, endIdx);
+        setPagedSearchResults(paginatedResults);
+    }, [searchTerm, data, page, rowsPerPage, sortedSearchResults]);
+
+
+
+    const handlePageChange = (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, newPage: number) => {
+        setPage(newPage);
+    };
+
+
+
+
 
     return (
         <Box>
             <Typography sx={{ flex: 1, color: '#5a5e5b' }} variant="h6" component="div">
-                Search Name
+                Search
             </Typography>
             <TextField
-                id="outlined-search" label="Mob Name" type="search"
+                id="outlined-search" label="Mob Name or Item Name" type="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{ color: '#ffffff', marginBottom: '10px' }}
@@ -162,10 +182,10 @@ const PlanilhaData = () => {
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
                 component="div"
-                count={searchResults.length} // Atualizado para o número de resultados de pesquisa
+                count={sortedSearchResults.length} // Use sortedSearchResults em vez de searchResults
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onPageChange={(event, newPage) => setPage(newPage)}
+                onPageChange={handlePageChange}
                 onRowsPerPageChange={(event) => {
                     setRowsPerPage(parseInt(event.target.value, 10));
                     setPage(0);

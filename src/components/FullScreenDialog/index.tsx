@@ -30,15 +30,15 @@ interface FullScreenDialogProps {
     data: ItemType[];
     selectedMobName: string | null;
     setSelectedMobName: (mobName: string | null) => void;
-  }
+}
 
 
-  export default function FullScreenDialog({
+export default function FullScreenDialog({
     item,
     data,
     selectedMobName,
     setSelectedMobName,
-  }: FullScreenDialogProps) {
+}: FullScreenDialogProps) {
     const [open, setOpen] = React.useState(false);
     const [selectedDropItem, setSelectedDropItem] = React.useState<string | null>();
     const [similarMobs, setSimilarMobs] = React.useState<ItemType[]>([]);
@@ -53,22 +53,24 @@ interface FullScreenDialogProps {
     const handleClickOpen = (mob: any) => {
         setOriginalMob(similarMob);
         setOpen(true); // Abra o diálogo
-      };
+    };
 
-      const handleClose = () => {
-        setSimilarMob(originalMob);
+    const handleClose = () => {
+        setSimilarMob(originalMob); // Restaurar o monstro original (se necessário)
+        setSelectedMobName(null); // Redefina o nome do monstro selecionado para null
+        setSimilarMobs([]); // Limpe o array similarMobs
         setOpen(false);
-      };
+    };
 
     const handleSimilarMobClick = (mob: ItemType) => {
         setSimilarMob(mob); // Atualize o monstro similar selecionado
-      };
-      
+    };
 
 
 
 
-    const mob = similarMob ? similarMob:item
+
+    const mob = similarMob ? similarMob : item
 
     // Suponha que `item` seja do tipo ItemType.
     const itemListWithPercentages = Object.keys(mob).map((key, index) => {
@@ -148,6 +150,7 @@ interface FullScreenDialogProps {
     }
 
     const handleItemClick = (clickedItem: string) => {
+        console.log('clickedItem:', clickedItem);
         setSelectedDropItem(clickedItem);
 
         // Extrair o nome do item do valor clicado, ignorando a porcentagem
@@ -181,12 +184,21 @@ interface FullScreenDialogProps {
 
     useEffect(() => {
         if (similarMob) {
-          // Atualize os dados do monstro similar com base em similarMob
-          setSimilarMobs([similarMob]);
+            // Atualize os dados do monstro similar com base em similarMob
+            setSimilarMobs([similarMob]);
         }
-      }, [similarMob]);
+    }, [similarMob]);
 
+    function parseDropValue(dropValue: string): { itemName: string; dropPercentage: string } | null {
+        const match = dropValue.match(/^(.*?) \((\d+(\.\d+)?)%\)$/);
+        if (match) {
+            const [, itemName, dropPercentage] = match;
+            return { itemName, dropPercentage };
+        }
+        return null;
+    }
 
+    
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
@@ -209,7 +221,7 @@ interface FullScreenDialogProps {
                             <CloseIcon />
                         </IconButton>
                         <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                        {mob['Mob Name']}
+                            {mob['Mob Name']}
                         </Typography>
                     </Toolbar>
                 </AppBar>
@@ -339,44 +351,67 @@ interface FullScreenDialogProps {
                     </div>
 
                     <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-                    Monsters that also drop this item
+                        Monsters that also drop this item
                     </Typography>
                     <Divider />
                     <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                        {similarMobs.map((mob, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    flex: '0 0 calc(20% - 20px)',
-                                    margin: '10px',
-                                    border: '1px dashed grey',
-                                    padding: '10px',
-                                    cursor: 'pointer',
-                                    transition: 'background-color 0.3s',
-                                }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'lightgrey';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.backgroundColor = 'transparent';
-                                }}
-                                onClick={() => {
-                                    handleSimilarMobClick(mob);
-                                }}
-                            >
-                                <ListItem>
-                                    <ListItemText
-                                        primary={mob['Mob Name']}
-                                        secondary={`Level: ${mob['Level']}`}
-                                    />
-                                </ListItem>
-                            </div>
-                        ))}
-                    </div>
-
-
-                </List>
-            </Dialog>
+    {similarMobs.map((mob: ItemType, index) => (
+        <div
+            key={index}
+            style={{
+                flex: '0 0 calc(20% - 20px)',
+                margin: '10px',
+                border: '1px dashed grey',
+                padding: '10px',
+                cursor: 'pointer',
+                transition: 'background-color 0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'lightgrey';
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+            onClick={() => {
+                handleSimilarMobClick(mob);
+            }}
+        >
+            <div>
+                <ListItem>
+                    <ListItemText
+                        primary={mob['Mob Name']}
+                        secondary={`Level: ${mob['Level']}`}
+                    />
+                </ListItem>
+            </div>
+            <div style={{ flex: '1', margin: '10px' }}>
+                {Object.keys(mob)
+                    .filter((key) => key.startsWith('Drop '))
+                    .map((key) => {
+                        const dropValue = (mob as Record<string, string>)[key];
+                        const dropInfo = parseDropValue(dropValue);
+                        return { key, dropInfo };
+                    })
+                    .filter((item) => item.dropInfo)
+                    .sort((a, b) => {
+                        const dropPercentageA = parseFloat(a.dropInfo?.dropPercentage ?? '0');
+                        const dropPercentageB = parseFloat(b.dropInfo?.dropPercentage ?? '0');
+                        return dropPercentageB - dropPercentageA;
+                    })
+                    .map((item) => (
+                        <div key={item.key}>
+                            {item.dropInfo?.itemName} - {item.dropInfo?.dropPercentage}%
+                        </div>
+                    ))
+                }
+            </div>
         </div>
-    );
+    ))}
+</div>
+</List>
+</Dialog>
+</div>
+);
 }
