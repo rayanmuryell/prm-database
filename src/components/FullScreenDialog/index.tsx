@@ -152,7 +152,6 @@ interface FullScreenDialogProps {
 
         // Extrair o nome do item do valor clicado, ignorando a porcentagem
         const clickedItemName = clickedItem.trim().split('(')[0].toLowerCase();
-        console.log(clickedItemName)
 
         // Inicializar uma lista de mobs relacionados
         const relatedMobs: ItemType[] = [];
@@ -178,8 +177,6 @@ interface FullScreenDialogProps {
 
         setSimilarMobs(relatedMobs);
         setSelectedMobName(clickedItem);
-        console.log(clickedItem)
-        console.log(relatedMobs)
     };
 
     useEffect(() => {
@@ -364,7 +361,6 @@ interface FullScreenDialogProps {
                                     e.currentTarget.style.backgroundColor = 'transparent';
                                 }}
                                 onClick={() => {
-                                    console.log('Clicou no monstro:', mob);
                                     handleSimilarMobClick(mob);
                                 }}
                             >
