@@ -201,7 +201,7 @@ export default function MonsterInfo() {
 
             </List> */}
 
-            Pênis!!!
+            Construção!!!
         </>
     )
 
