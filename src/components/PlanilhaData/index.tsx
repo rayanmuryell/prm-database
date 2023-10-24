@@ -95,9 +95,7 @@ const PlanilhaData = () => {
             setPagedSearchResults(results.slice(startIdx, endIdx));
         } else {
             setSearchResults(data.slice(0, 5));
-
             setPage(0);
-
             const startIdx = 0;
             const endIdx = startIdx + rowsPerPage;
             setPagedSearchResults(data.slice(startIdx, endIdx));
@@ -130,7 +128,7 @@ const PlanilhaData = () => {
                             <TableCell style={{ color: '#FFFFFF' }} align="center">Mob Name</TableCell>
                             <TableCell style={{ color: '#FFFFFF' }} align="center">Level</TableCell>
                             <TableCell style={{ color: '#FFFFFF' }} align="center">HP</TableCell>
-                            <TableCell style={{ backgroundColor: '#690a24', color: '#FFFFFF' }} align="center">Other</TableCell>
+                            <TableCell style={{ backgroundColor: '#690a24', color: '#FFFFFF' }} align="center">INFO</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
