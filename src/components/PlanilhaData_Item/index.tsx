@@ -74,8 +74,6 @@ const PlanilhaData_Item = () => {
                 // Obtenha todos os drops
                 const allDrops = typedData.flatMap(item => item.Drops);
 
-                console.log('Todos os drops:', allDrops); // Adicione este log
-
                 // Remova itens duplicados e obtenha apenas os nomes dos itens
                 const uniqueDropNamesSet = new Set<string>(); // Defina explicitamente o tipo como string
                 allDrops.forEach(drop => {
@@ -86,8 +84,6 @@ const PlanilhaData_Item = () => {
                 const uniqueDropNames = Array.from(uniqueDropNamesSet);
 
                 setUniqueDropNames(uniqueDropNames);
-
-                console.log('Nomes exclusivos dos drops:', uniqueDropNames); // Adicione este log
 
                 // Agora, defina os 5 primeiros itens em `searchResults`
                 setTopFiveItems(uniqueDropNames.slice(0, 5));

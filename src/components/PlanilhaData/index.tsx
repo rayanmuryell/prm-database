@@ -106,8 +106,7 @@ const PlanilhaData = () => {
         // Adicione a classificação aqui
         const sortedResults = [...pagedSearchResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
         setSortedSearchResults(sortedResults);
-
-    }, [searchTerm, data, page, rowsPerPage, pagedSearchResults]);
+    }, [searchTerm, data, page, rowsPerPage]);
 
     return (
         <Box>
