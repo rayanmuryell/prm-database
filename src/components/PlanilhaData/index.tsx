@@ -85,38 +85,52 @@ const PlanilhaData = () => {
 
 
     useEffect(() => {
+        let filteredResults = data;
+    
         if (searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase();
-            const filteredResults = data.filter((item) => {
+            filteredResults = data.filter((item) => {
                 // Verifique se 'Mob Name' ou as chaves de 'Drop 1' até 'Drop 10' contêm o termo de pesquisa em letras minúsculas
                 return (
                     item['Mob Name'].toLowerCase().includes(lowerCaseSearchTerm) ||
                     Array.from(Array(10).keys()).some((i) => {
                         const key = `Drop ${i + 1}` as keyof ItemType;
-                        setPage(0);
                         return item[key] && item[key].toLowerCase().includes(lowerCaseSearchTerm);
-                        
                     })
                 );
             });
-
-            // Classifique os resultados filtrados
-            const sortedResults = [...filteredResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
-
-            // Defina os resultados filtrados e classificados
-            setSortedSearchResults(sortedResults);
-        } else {
-            // Se não houver um termo de pesquisa, exiba todos os dados
-            const sortedResults = [...data].sort((a, b) => Number(b['Level']) - Number(a['Level']));
-            setSortedSearchResults(sortedResults);
         }
-
+    
+        // Classifique os resultados filtrados
+        const sortedResults = [...filteredResults].sort((a, b) => Number(b['Level']) - Number(a['Level']));
+    
         // Lógica de paginação
-        const startIdx = page * rowsPerPage;
+        const totalResults = sortedResults.length;
+        const totalPages = Math.ceil(totalResults / rowsPerPage);
+    
+        // Verifique se a página atual está fora dos limites
+        let newPage = page;
+        if (newPage < 0) {
+            newPage = 0;
+        } else if (newPage >= totalPages) {
+            newPage = totalPages - 1;
+        }
+    
+        setPage(newPage);
+    
+        const startIdx = newPage * rowsPerPage;
         const endIdx = startIdx + rowsPerPage;
-        const paginatedResults = sortedSearchResults.slice(startIdx, endIdx);
+        const paginatedResults = sortedResults.slice(startIdx, endIdx);
+    
+        // Defina os resultados filtrados e classificados
+        setSortedSearchResults(sortedResults);
         setPagedSearchResults(paginatedResults);
-    }, [searchTerm, data, page, rowsPerPage, sortedSearchResults]);
+    }, [searchTerm, data, page, rowsPerPage]);
+    
+    
+    
+    
+    
 
 
 
