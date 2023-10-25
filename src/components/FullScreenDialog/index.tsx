@@ -150,7 +150,6 @@ export default function FullScreenDialog({
     }
 
     const handleItemClick = (clickedItem: string) => {
-        console.log('clickedItem:', clickedItem);
         setSelectedDropItem(clickedItem);
 
         // Extrair o nome do item do valor clicado, ignorando a porcentagem
