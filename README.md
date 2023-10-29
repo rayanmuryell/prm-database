@@ -1,40 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<br/>
+<p align="center">
+  <a href="https://github.com/rayanmuryell/prm-database">
+    <img src="https://prm-database.vercel.app/_next/image?url=%2Fdiscordanimated.gif&w=96&q=75" alt="Logo" width="80" height="80">
+  </a>
+
+  <h3 align="center">Project Return to Morroc - Database</h3>
+
+  <p align="center">
+    This project was created by consuming data from an online spreadsheet developed by RafCake and Grimoire, both players of Return to Morroc, an online game based on Ragnarok Online.
+    <br/>
+    <br/>
+    <a href="https://prm-database.vercel.app/">View Demo</a>
+    .
+    <a href="https://github.com/rayanmuryell/prm-database/issues">Report Bug</a>
+    .
+    <a href="https://github.com/rayanmuryell/prm-database/issues">Request Feature</a>
+  </p>
+</p>
+
+![Contributors](https://img.shields.io/github/contributors/rayanmuryell/prm-database?color=dark-green) ![Stargazers](https://img.shields.io/github/stars/rayanmuryell/prm-database?style=social) ![Issues](https://img.shields.io/github/issues/rayanmuryell/prm-database) 
+
+## About The Project
+
+![Screen Shot](https://i.imgur.com/ufsSPWd.png)
+![Screen Shot](https://i.imgur.com/m2ncuIB.png)
+
 
 ## Getting Started
 
-First, run the development server:
+To get a local copy up and running follow these simple example steps.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Creating A Pull Request
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Authors
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* **Rayan Muryell** - *Fullstack Developer* - [Rayan Muryell](https://github.com/rayanmuryell/) - *Author*
